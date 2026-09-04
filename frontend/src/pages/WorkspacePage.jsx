@@ -1646,19 +1646,21 @@ function ThinkingJourney({
   );
   const requestedSummary = useRef(false);
 
-  const requestSummary = useCallback(() => {
+  const requestSummary = useCallback((force = false) => {
+    const hasModelSummary =
+      progress.reasoningJourney?.source === "model" &&
+      progress.reasoningJourney?.headline &&
+      progress.reasoningJourney?.world_model &&
+      progress.reasoningJourney?.shift &&
+      progress.reasoningJourney?.confidence_insight &&
+      progress.reasoningJourney?.late_arriving_clue &&
+      progress.reasoningJourney?.clue_adoption &&
+      progress.reasoningJourney?.theory_components &&
+      progress.reasoningJourney?.solution_coverage;
+
     if (
-      requestedSummary.current ||
-      (
-        progress.reasoningJourney?.headline &&
-        progress.reasoningJourney?.world_model &&
-        progress.reasoningJourney?.shift &&
-        progress.reasoningJourney?.confidence_insight &&
-        progress.reasoningJourney?.late_arriving_clue &&
-        progress.reasoningJourney?.clue_adoption &&
-        progress.reasoningJourney?.theory_components &&
-        progress.reasoningJourney?.solution_coverage
-      ) ||
+      (!force && requestedSummary.current) ||
+      hasModelSummary ||
       !progress.hypothesisV1 ||
       !progress.finalReasoning
     ) {
@@ -1703,10 +1705,15 @@ function ThinkingJourney({
         saveReasoningJourney(
           buildLocalReasoningJourney(progress),
         );
-        setSummaryError("AI 摘要暂时不可用，已根据你的原始记录生成本地复盘。");
+        setSummaryError("AI 档案生成时间较长，当前先展示本地复盘。你的原始记录仍完整保留。");
       })
       .finally(() => setSummaryLoading(false));
   }, [progress, saveReasoningJourney]);
+
+  const retrySummary = useCallback(() => {
+    requestedSummary.current = false;
+    requestSummary(true);
+  }, [requestSummary]);
 
   useEffect(() => {
     requestSummary();
@@ -1767,7 +1774,22 @@ function ThinkingJourney({
           <div><h3>Evidence Impact Map</h3><p>主张不是被答案替换，而是被证据逐次撞击、收窄和重组</p></div>
         </div>
         {summaryLoading && <div className="journeySummaryStatus">正在重建证据与你的判断之间的关系……</div>}
-        {summaryError && <div className="journeySummaryStatus journeySummaryError">{summaryError}</div>}
+        {summaryError && (
+          <div className="journeySummaryStatus journeySummaryError" role="status">
+            <div>
+              <strong>当前为临时复盘</strong>
+              <p>{summaryError}</p>
+            </div>
+            <button
+              type="button"
+              className="journeySummaryRetry"
+              disabled={summaryLoading}
+              onClick={retrySummary}
+            >
+              {summaryLoading ? "正在重新生成…" : "重新生成 AI 档案"}
+            </button>
+          </div>
+        )}
         {worldModel?.claims?.length ? (
           <div className="impactMap" role="list" aria-label="证据如何改变你的世界模型">
             <article className="worldClaim worldClaimInitial" role="listitem">

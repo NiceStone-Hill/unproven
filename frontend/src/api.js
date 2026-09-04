@@ -414,7 +414,9 @@ export function summarizeReasoningJourney({
         })),
       }),
 
-      timeoutMs: 30000,
+      // 终局档案需要一次性重建完整的世界模型；线上模型在冷启动时
+      // 偶尔接近 30 秒，给它留出足够时间，避免成功响应在最后一刻被丢弃。
+      timeoutMs: 60000,
     },
   );
 }

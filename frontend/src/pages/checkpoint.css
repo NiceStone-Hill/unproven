@@ -1690,6 +1690,59 @@
   gap: 16px;
 }
 
+.journeySummaryError strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journeySummaryError p {
+  margin: 5px 0 0;
+  line-height: 1.65;
+}
+
+.journeySummaryRetry {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.journeySummaryRetry:hover:not(:disabled) {
+  color: var(--ink);
+  background: transparent;
+}
+
+.journeySummaryRetry:focus-visible {
+  outline: 2px solid var(--scan);
+  outline-offset: 3px;
+}
+
+.journeySummaryRetry:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+@media (max-width: 680px) {
+  .journeySummaryError {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .journeySummaryRetry {
+    width: 100%;
+  }
+}
+
 .caseClosureFooter {
   display: flex;
   align-items: center;
