@@ -1,5 +1,5 @@
 const STORAGE_KEY = "inkecho_progress_v1";
-const CURRENT_SCHEMA_VERSION = 4;
+const CURRENT_SCHEMA_VERSION = 5;
 
 function createSessionId() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -14,6 +14,7 @@ export function createDefaultProgress() {
     sessionId: createSessionId(),
     started: false,
     startedAt: null,
+    initialJudgment: null,
     reading: {
       completed: false,
       trainingCompleted: false,

@@ -1760,6 +1760,76 @@
   letter-spacing: 3px;
 }
 
+.archiveEssentials {
+  display: grid;
+  gap: 16px;
+  padding: 26px;
+  background: #f7f6f1;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.archiveConclusion > span,
+.shareCardPanel > div:first-child > span {
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.archiveConclusion h3 {
+  max-width: 780px;
+  margin: 8px 0 0;
+  font-family: var(--font-reading);
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1.42;
+}
+
+.trajectoryRail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule); }
+.trajectoryRail article { position: relative; min-width: 0; padding: 16px; border-right: 1px solid var(--rule); }
+.trajectoryRail article:last-child { border-right: 0; }
+.trajectoryRail article > span { color: var(--scan); font-family: var(--font-mono); font-size: 11px; font-weight: 800; }
+.trajectoryRail article p { margin: 8px 0 0; font-size: 13px; line-height: 1.65; }
+.trajectoryRail article b { position: absolute; top: 50%; right: -13px; z-index: 2; display: grid; width: 25px; height: 25px; place-items: center; color: #fff; background: var(--scan); transform: translateY(-50%); }
+
+.premiseCorrection { padding: 18px; background: var(--scan-pale); border-left: 4px solid var(--scan); }
+.premiseCorrection h3 { margin: 12px 0 5px; font-family: var(--font-reading); font-size: 20px; }
+.premiseCorrection > p:last-child { margin: 0; line-height: 1.7; }
+
+.shareCardPanel { display: grid; grid-template-columns: minmax(180px, .7fr) minmax(260px, 1.3fr); gap: 18px 28px; margin: 24px 26px; padding: 22px; background: var(--ink); color: var(--paper); }
+.shareCardPanel h3 { margin: 7px 0 4px; font-family: var(--font-reading); font-size: 24px; }
+.shareCardPanel > div:first-child p { margin: 0; color: #bcc7c4; font-size: 12px; line-height: 1.6; }
+.spoilerToggle { align-self: end; justify-self: start; display: inline-flex; align-items: center; gap: 9px; color: #dbe5e2; font-size: 12px; cursor: pointer; }
+.spoilerToggle input { width: 18px; height: 18px; accent-color: var(--scan); }
+.shareCardPreview { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid #566160; }
+.shareCardPreview p { margin: 0; padding: 14px; color: #e9edeb; border-right: 1px solid #566160; border-bottom: 1px solid #566160; font-size: 12px; line-height: 1.65; }
+.shareCardPreview p:nth-child(2n) { border-right: 0; }
+.shareCardPreview p:nth-last-child(-n + 2) { border-bottom: 0; }
+.shareCardPreview b { display: block; margin-bottom: 5px; color: #86bab6; font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; }
+.shareActions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.shareActions span { color: #b8c6c3; font-size: 11px; }
+.shareCardPanel .secondaryButton { color: var(--paper); border-color: #7f8b88; }
+
+.fullArchiveDetails { margin: 24px 26px; border: 1px solid var(--rule-strong); }
+.fullArchiveDetails > summary { padding: 16px 18px; color: var(--ink); background: var(--paper-deep); font-weight: 800; cursor: pointer; }
+.fullArchiveDetails > summary::marker { color: var(--scan); }
+.fullArchiveBody { padding: 0 18px 18px; }
+
+@media (max-width: 720px) {
+  .archiveEssentials { padding: 18px 14px; }
+  .trajectoryRail { grid-template-columns: 1fr; }
+  .trajectoryRail article { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .trajectoryRail article:last-child { border-bottom: 0; }
+  .trajectoryRail article b { top: auto; right: 50%; bottom: -13px; transform: translateX(50%) rotate(90deg); }
+  .shareCardPanel { grid-template-columns: 1fr; margin: 18px 0; }
+  .shareCardPreview { grid-template-columns: 1fr; }
+  .shareCardPreview p { border-right: 0; }
+  .shareCardPreview p:nth-last-child(-n + 2) { border-bottom: 1px solid #566160; }
+  .shareCardPreview p:last-child { border-bottom: 0; }
+  .fullArchiveDetails { margin: 18px 0; }
+  .fullArchiveBody { padding: 0 10px 10px; }
+}
+
 /* Checkpoints are marginal notes: intimate, deliberate, and visibly separate from story facts. */
 .checkpointNotification {
   padding: 11px 34px 11px 11px;

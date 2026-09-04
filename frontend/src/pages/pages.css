@@ -1203,6 +1203,68 @@
   display: block;
 }
 
+.inlineEvidenceHint {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin: -8px 0 26px;
+  padding: 14px 16px;
+  background: var(--scan-pale);
+  border: 1px solid #9ab8b5;
+  border-left: 4px solid var(--scan);
+}
+.inlineEvidenceHint span { display: block; margin-bottom: 3px; color: var(--scan); font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.inlineEvidenceHint strong { color: #254648; font-size: 13px; line-height: 1.6; }
+.inlineEvidenceHint button { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; color: var(--scan); background: transparent; border: 1px solid #9ab8b5; font-size: 18px; }
+
+.sealedEntryNotice { display: flex; align-items: center; gap: 12px; margin: -10px 0 28px; padding: 12px 14px; background: var(--scan-pale); border-left: 4px solid var(--scan); }
+.sealedEntryNotice > span { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; color: #fff; background: var(--scan); border-radius: 50%; font-weight: 800; }
+.sealedEntryNotice strong { display: block; color: #23484a; font-size: 14px; }
+.sealedEntryNotice p { margin: 2px 0 0; color: #496766; font-size: 12px; }
+
+.guidedEmptyState { padding: 24px; background: var(--scan-pale); border-left: 4px solid var(--scan); }
+.guidedEmptyState > span { color: var(--scan); font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.guidedEmptyState h3 { margin: 8px 0 5px; font-family: var(--font-reading); font-size: 22px; }
+.guidedEmptyState p { margin: 0; color: var(--ink-soft); line-height: 1.7; }
+
+.sourceTag { display: inline-flex; padding: 4px 7px; color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.sourceTagYou { background: var(--ink); }
+.sourceTagText { color: var(--ink); background: #d7c37f; }
+.sourceTagAgent { background: var(--scan); }
+.sourceTagReveal { background: var(--signal); }
+.agentDisclosure { color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+
+.judgmentTimeline { display: grid; gap: 12px; }
+.judgmentTimeline article { padding: 16px; background: var(--paper-deep); border-left: 3px solid var(--ink); }
+.judgmentTimeline article > p { margin: 10px 0 0; color: var(--ink); line-height: 1.75; }
+.judgmentTimeline blockquote { margin: 14px 0 0; padding: 12px; color: var(--ink-soft); background: var(--paper-raised); border-left: 3px solid #b59d4a; line-height: 1.65; }
+.judgmentTimeline blockquote .sourceTag { margin-right: 8px; }
+.agentReviewRecord h3 { margin: 16px 0 10px; font-family: var(--font-reading); font-size: 22px; line-height: 1.55; }
+.agentReviewRecord > p:not(.agentDisclosure) { padding: 14px; background: var(--signal-pale); border-left: 3px solid var(--signal); line-height: 1.7; }
+.reviewResponse { margin-top: 20px; padding: 16px; background: var(--paper-deep); }
+.reviewResponse p { margin: 10px 0 0; line-height: 1.7; }
+
+.revealReplay > header { margin-bottom: 34px; padding: 22px; background: var(--ink); color: var(--paper); }
+.revealReplay > header > span { color: #8dc1bd; font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.revealReplay > header h2 { margin: 10px 0 6px; font-family: var(--font-reading); font-size: clamp(24px, 4vw, 36px); }
+.revealReplay > header p { margin: 0; color: #c4cecb; line-height: 1.6; }
+.revealPhaseList { display: grid; gap: 28px; }
+.revealPhase { position: relative; padding: 0 0 28px 54px; border-bottom: 1px solid var(--rule); }
+.revealPhaseIndex { position: absolute; top: 0; left: 0; color: var(--signal); font-family: var(--font-mono); font-size: 26px; font-weight: 800; }
+.revealPhase h3 { margin: 0 0 14px; font-family: var(--font-reading); font-size: 24px; }
+.revealCompareGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.revealCompareGrid > div { min-width: 0; padding: 14px; background: var(--paper-deep); border-top: 3px solid var(--rule-strong); }
+.revealCompareGrid > div:first-child { border-color: var(--signal); }
+.revealCompareGrid > div:last-child { border-color: var(--scan); }
+.revealCompareGrid p { margin: 10px 0 0; font-size: 13px; line-height: 1.7; }
+.revealCompareGrid small { display: block; margin-top: 9px; color: var(--ink-soft); font-size: 10px; line-height: 1.5; }
+
+@media (max-width: 720px) {
+  .revealPhase { padding-left: 0; padding-top: 38px; }
+  .revealCompareGrid { grid-template-columns: 1fr; }
+}
+
 .readerToolsPanelIntro strong {
   color: #1f4749;
   font-family: var(--font-reading);
