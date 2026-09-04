@@ -1304,7 +1304,7 @@ function AnnotationLayer({
 
           className="annotationHoverIcon"
 
-          title="添加批注"
+          title="保存为推理证据"
 
           style={{
             top:
@@ -1512,7 +1512,7 @@ function AnnotationLayer({
               >
 
                 <span>
-                  建议写一行简短批注
+                  写下它为什么会影响你的判断
                 </span>
 
 
@@ -1693,7 +1693,7 @@ function AnnotationLayer({
               {
                 saving
                   ? "保存中..."
-                  : "保存批注"
+                  : "保存为推理证据"
               }
             </button>
 

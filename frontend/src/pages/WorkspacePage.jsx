@@ -250,8 +250,9 @@ function FloatingMenu({
   onToggle,
   onDismissHint,
   onOpenAnnotations,
+  onOpenCurrent,
+  onOpenReview,
   onOpenQA,
-  onOpenCheckpoint,
   onReset,
 }) {
   return (
@@ -302,17 +303,17 @@ function FloatingMenu({
         >
           <div className="readerToolsPanelIntro">
             <strong>阅读工具</strong>
-            <span>拖选正文即可添加批注</span>
+            <span>判断、证据与审查各归其位</span>
           </div>
 
           <button
             type="button"
             onClick={
-              onOpenCheckpoint
+              onOpenCurrent
             }
           >
-            <span><b aria-hidden="true">◇</b>当前思考</span>
-            <small>{hasPendingCheckpoint ? "待回应" : "查看"}</small>
+            <span><b aria-hidden="true">◇</b>当前判断</span>
+            <small>{hasPendingCheckpoint ? "待封存" : "查看"}</small>
           </button>
 
           <button
@@ -321,8 +322,13 @@ function FloatingMenu({
               onOpenAnnotations
             }
           >
-            <span><b aria-hidden="true">✎</b>我的证据与批注</span>
+            <span><b aria-hidden="true">✎</b>我的推理证据</span>
             <small>{annotationCount || "暂无"}</small>
+          </button>
+
+          <button type="button" onClick={onOpenReview}>
+            <span><b aria-hidden="true">↯</b>Agent 审查</span>
+            <small>{hasPendingCheckpoint ? "待回应" : "记录"}</small>
           </button>
 
           <button
@@ -342,6 +348,122 @@ function FloatingMenu({
         </div>
       )}
     </div>
+  );
+}
+
+function CurrentJudgmentPanel({ progress }) {
+  const records = [
+    progress.initialJudgment && {
+      label: "开场判断",
+      text: progress.initialJudgment.text,
+      evidence: progress.initialJudgment.evidence,
+    },
+    progress.hypothesisV1 && { label: "V1", text: progress.hypothesisV1.text },
+    progress.hypothesisV2 && { label: "V2", text: progress.hypothesisV2.text },
+    progress.finalReasoning && { label: "Final", text: progress.finalReasoning.text },
+  ].filter(Boolean);
+
+  if (!records.length) {
+    return (
+      <div className="guidedEmptyState">
+        <span>尚未封存</span>
+        <h3>你还没有封存判断</h3>
+        <p>读完本节后，我们会邀请你写下当前解释。</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="judgmentTimeline">
+      {records.map((record, index) => (
+        <article key={`${record.label}-${index}`}>
+          <span className="sourceTag sourceTagYou">YOU SAID · {record.label}</span>
+          <p>{record.text}</p>
+          {record.evidence && (
+            <blockquote>
+              <span className="sourceTag sourceTagText">TEXT EVIDENCE</span>
+              {record.evidence}
+            </blockquote>
+          )}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function AgentReviewPanel({ progress }) {
+  if (!progress.stressResult) {
+    return (
+      <div className="guidedEmptyState">
+        <span>尚未开始</span>
+        <h3>Agent 还没有审查你的前提</h3>
+        <p>当新证据足以挑战当前判断时，这里会出现一条无剧透的压力问题。</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="agentReviewRecord">
+      <span className="sourceTag sourceTagAgent">AGENT INFERENCE</span>
+      <p className="agentDisclosure">这是系统根据你的记录生成的解释，你可以在回应中修正它。</p>
+      <h3>{progress.stressResult.pressure_question}</h3>
+      <p>{progress.stressResult.selected_assumption}</p>
+      {progress.stressAnswer && (
+        <div className="reviewResponse">
+          <span className="sourceTag sourceTagYou">YOU SAID</span>
+          <p>{progress.stressAnswer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RevealReasoningReplay({ progress }) {
+  const userTheory = progress.finalReasoning?.text || progress.hypothesisV2?.text || progress.hypothesisV1?.text || "";
+  const phases = [
+    { title: "发现排水管", reveal: "老鼠消失暴露了牢房内的第二个开口：一根通向墙外方向的废弃排水管。", keywords: ["排水", "老鼠", "管"], bridge: "把“密闭牢房”改写成“存在一条物资可通过的细小路径”。" },
+    { title: "建立通信线路", reveal: "教授用老鼠送出布信，再把袜线、丝线、麻绳逐步升级为金属线。", keywords: ["线", "通信", "信", "老鼠"], bridge: "解释了牢内外如何持续协作，而不是一次偶然传信。" },
+    { title: "输入酸、工具与衣物", reveal: "金属线让硝酸、工具、绳索、零钱与换装衣物沿管道进入牢房。", keywords: ["酸", "工具", "衣", "物资"], bridge: "补上了“知道出口”与“具备行动能力”之间的运输机制。" },
+    { title: "制造照明故障", reveal: "教授用硝酸处理钢条与窗栏，并破坏窗外供电线，使院子陷入黑暗。", keywords: ["停电", "照明", "电线", "酸"], bridge: "黑暗不是掩护的巧合，而是主动制造的时间窗口。" },
+    { title: "引入外部电工", reveal: "监狱没有自己的电工，停电必然让外部维修人员获得合法入口。", keywords: ["电工", "维修", "外部"], bridge: "把监狱的安保流程本身变成了进入系统的通行证。" },
+    { title: "完成身份替换", reveal: "哈奇混入电工队伍，把帽子、外套与工装裤交给教授换装。", keywords: ["换装", "身份", "电工", "伪装"], bridge: "人数没有变化，但被清点的“人”已经发生替换。" },
+    { title: "从正门离开", reveal: "教授不穿越高墙，而是作为被认可的维修工，跟随哈奇从大门离开。", keywords: ["正门", "大门", "电工", "出去"], bridge: "最终出口不是物理薄弱点，而是守卫默认可信的身份。" },
+  ];
+
+  return (
+    <section className="revealReplay">
+      <header>
+        <span>S07 · REASONING REPLAY</span>
+        <h2>答案不是一句话，而是七次机制闭环</h2>
+        <p>逐步对照原作、你当时的判断，以及每一步补上的因果桥。</p>
+      </header>
+      <div className="revealPhaseList">
+        {phases.map((phase, index) => {
+          const matched = phase.keywords.some((keyword) => userTheory.includes(keyword));
+          return (
+            <article className="revealPhase" key={phase.title}>
+              <div className="revealPhaseIndex">{String(index + 1).padStart(2, "0")}</div>
+              <h3>{phase.title}</h3>
+              <div className="revealCompareGrid">
+                <div>
+                  <span className="sourceTag sourceTagReveal">REVEAL</span>
+                  <p>{phase.reveal}</p>
+                </div>
+                <div>
+                  <span className="sourceTag sourceTagYou">YOU SAID</span>
+                  <p>{matched ? userTheory : "你当时的记录还没有明确解释这一环。"}</p>
+                </div>
+                <div>
+                  <span className="sourceTag sourceTagAgent">AGENT INFERENCE</span>
+                  <p>{phase.bridge}</p>
+                  <small>这是系统根据你的记录生成的解释，你可以修正。</small>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -1712,6 +1834,8 @@ function ThinkingJourney({
   const [feedbackSaved, setFeedbackSaved] = useState(
     Boolean(progress.completion.feedback),
   );
+  const [showShareSpoiler, setShowShareSpoiler] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
   const requestedSummary = useRef(false);
 
   const requestSummary = useCallback((force = false) => {
@@ -1811,6 +1935,65 @@ function ThinkingJourney({
     CLAIM_REINFORCED: "主张承受审查后被保留",
   };
 
+  const trajectory = [
+    { label: "V1", text: progress.hypothesisV1?.text },
+    { label: "V2", text: progress.hypothesisV2?.text || progress.hypothesisV1?.text },
+    { label: "FINAL", text: progress.finalReasoning?.text },
+  ];
+
+  const shareText = [
+    "我的 UNPROVEN 推理档案｜第十三号牢房",
+    `最初判断：${progress.hypothesisV1?.text || progress.initialJudgment?.text || "未记录"}`,
+    `改变我的证据：${worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence || "在阅读中逐步发现"}`,
+    `我误设的前提：${progress.stressResult?.selected_assumption || "尚未识别"}`,
+    showShareSpoiler ? `最终理解：${progress.finalReasoning?.text || "未记录"}` : "最终理解：已隐藏谜底",
+  ].join("\n");
+
+  async function shareArchive() {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "我的 UNPROVEN 推理档案", text: shareText });
+        setShareStatus("分享面板已打开");
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        setShareStatus("分享文字已复制");
+      }
+    } catch (error) {
+      if (error?.name !== "AbortError") setShareStatus("暂时无法分享，请重试");
+    }
+  }
+
+  function downloadShareCard() {
+    const escapeXml = (value = "") => value.replace(/[<>&'"]/g, (character) => ({
+      "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;",
+    })[character]);
+    const wrap = (value, max = 22) => {
+      const clean = value || "未记录";
+      return [clean.slice(0, max), clean.slice(max, max * 2), clean.length > max * 2 ? `${clean.slice(max * 2, max * 3)}…` : ""].filter(Boolean);
+    };
+    const fields = [
+      ["我的最初判断", progress.hypothesisV1?.text || progress.initialJudgment?.text],
+      ["改变我的证据", worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence],
+      ["我误设的前提", progress.stressResult?.selected_assumption],
+      ["最终理解", showShareSpoiler ? progress.finalReasoning?.text : "谜底已隐藏 · 来建立你自己的世界模型"],
+    ];
+    let y = 178;
+    const body = fields.map(([label, value]) => {
+      const lines = wrap(value);
+      const block = `<text x="72" y="${y}" fill="#39777a" font-size="18" font-family="sans-serif" font-weight="700">${escapeXml(label)}</text>${lines.map((line, index) => `<text x="72" y="${y + 36 + index * 28}" fill="#171b1c" font-size="22" font-family="sans-serif">${escapeXml(line)}</text>`).join("")}`;
+      y += 76 + lines.length * 28;
+      return block;
+    }).join("");
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><rect width="900" height="1200" fill="#f3f2ed"/><rect x="36" y="36" width="828" height="1128" fill="none" stroke="#171b1c" stroke-width="3"/><rect x="36" y="36" width="828" height="12" fill="#a83934"/><text x="72" y="105" fill="#171b1c" font-size="30" font-family="monospace" font-weight="700">UNPROVEN · CASE 013</text><text x="72" y="140" fill="#566062" font-size="16" font-family="sans-serif">我的世界模型，如何被证据改写</text>${body}<text x="72" y="1110" fill="#566062" font-size="16" font-family="sans-serif">${showShareSpoiler ? "含谜底版本" : "无剧透版本"} · unproven</text></svg>`;
+    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `unproven-case-013-${showShareSpoiler ? "spoiler" : "no-spoiler"}.svg`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setShareStatus("分享卡片已导出");
+  }
+
 
   return (
     <section className="thinkingJourney caseClosure">
@@ -1829,6 +2012,55 @@ function ThinkingJourney({
         <div><span>证据撞击</span><strong>{worldModel?.impacts?.length || 0} 次</strong></div>
         <div><span>记录状态</span><strong>{summaryLoading ? "正在重建" : "已封存"}</strong></div>
       </div>
+
+      <section className="archiveEssentials" aria-label="推理档案摘要">
+        <div className="archiveConclusion">
+          <span>一句话结论</span>
+          <h3>{summary?.headline || worldModel?.biggest_reconstruction || "你的判断在新证据到来后完成了重建。"}</h3>
+        </div>
+        <div className="trajectoryRail">
+          {trajectory.map((item, index) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <p>{item.text || "这一阶段没有留下独立记录"}</p>
+              {index < trajectory.length - 1 && <b aria-hidden="true">→</b>}
+            </article>
+          ))}
+        </div>
+        <div className="premiseCorrection">
+          <span className="sourceTag sourceTagAgent">AGENT INFERENCE</span>
+          <p className="agentDisclosure">这是系统根据你的记录生成的解释，你可以修正。</p>
+          <h3>最关键的一次前提修正</h3>
+          <p>{progress.stressResult?.selected_assumption || worldModel?.impacts?.[0]?.challenged_assumption || "还没有足够记录识别关键前提。"}</p>
+        </div>
+      </section>
+
+      <section className="shareCardPanel">
+        <div>
+          <span>SHAREABLE REASONING ASSET</span>
+          <h3>把推理路径带走</h3>
+          <p>分享的是你的判断如何改变，而不只是答案。</p>
+        </div>
+        <label className="spoilerToggle">
+          <input type="checkbox" checked={showShareSpoiler} onChange={(event) => setShowShareSpoiler(event.target.checked)} />
+          <span>{showShareSpoiler ? "含谜底" : "不含谜底"}</span>
+        </label>
+        <div className="shareCardPreview">
+          <p><b>我的最初判断</b>{progress.hypothesisV1?.text || progress.initialJudgment?.text || "未记录"}</p>
+          <p><b>改变我的证据</b>{worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence || "在阅读中逐步发现"}</p>
+          <p><b>我误设的前提</b>{progress.stressResult?.selected_assumption || "尚未识别"}</p>
+          <p><b>最终理解</b>{showShareSpoiler ? (progress.finalReasoning?.text || "未记录") : "谜底已隐藏"}</p>
+        </div>
+        <div className="shareActions">
+          <button type="button" className="primaryButton" onClick={shareArchive}>分享卡片</button>
+          <button type="button" className="secondaryButton" onClick={downloadShareCard}>导出 SVG</button>
+          {shareStatus && <span role="status">{shareStatus}</span>}
+        </div>
+      </section>
+
+      <details className="fullArchiveDetails">
+        <summary>展开完整档案</summary>
+        <div className="fullArchiveBody">
 
       <section className="caseClosureFinding journeyHeadline">
         <span>THE RECONSTRUCTION</span>
@@ -1946,6 +2178,8 @@ function ThinkingJourney({
           </div>
         </details>
       </section>
+        </div>
+      </details>
 
       <section className="readerFeedbackSection">
         <span>READER FEEDBACK</span>
@@ -2526,9 +2760,7 @@ function WorkspacePage() {
         hasPendingCheckpoint={hasPendingCheckpoint}
 
         showHint={
-          showReaderToolsHint &&
-          progress.annotations.length === 0 &&
-          pageId <= STAGE_COUNT
+          false
         }
 
         onDismissHint={dismissReaderToolsHint}
@@ -2548,15 +2780,21 @@ function WorkspacePage() {
           );
         }}
 
+        onOpenCurrent={() => {
+          setMenuOpen(false);
+          setOpenPanel("current");
+        }}
+
+        onOpenReview={() => {
+          setMenuOpen(false);
+          setOpenPanel("review");
+        }}
+
         onOpenQA={() => {
           setMenuOpen(false);
 
           setOpenPanel("qa");
         }}
-
-        onOpenCheckpoint={
-          handleOpenCheckpoint
-        }
 
         onReset={() => {
           setMenuOpen(false);
@@ -2639,6 +2877,16 @@ function WorkspacePage() {
           </span>
         </div>
 
+        {pageId === 1 && progress.initialJudgment && (
+          <div className="sealedEntryNotice" role="status">
+            <span aria-hidden="true">✓</span>
+            <div>
+              <strong>已封存</strong>
+              <p>之后的新证据可能会挑战这个判断。</p>
+            </div>
+          </div>
+        )}
+
 
         {loading &&
           !stage && (
@@ -2691,21 +2939,25 @@ function WorkspacePage() {
               {stage.title}
             </h1>
 
-            <AnnotationLayer
-              stageId={
-                pageId
-              }
+            {showReaderToolsHint && progress.annotations.length === 0 && pageId >= 2 && pageId <= 5 && (
+              <aside className="inlineEvidenceHint" aria-label="保存推理证据提示">
+                <div>
+                  <span>发现线索？</span>
+                  <strong>看到可能影响判断的内容？长按或拖选它，保存为推理证据。</strong>
+                </div>
+                <button type="button" onClick={dismissReaderToolsHint} aria-label="关闭提示">×</button>
+              </aside>
+            )}
 
-              segments={
-                stage.segments
-              }
-
-              onOpenAnnotations={() =>
-                setOpenPanel(
-                  "annotations",
-                )
-              }
-            />
+            {pageId === STAGE_COUNT ? (
+              <RevealReasoningReplay progress={progress} />
+            ) : (
+              <AnnotationLayer
+                stageId={pageId}
+                segments={stage.segments}
+                onOpenAnnotations={() => setOpenPanel("annotations")}
+              />
+            )}
 
             {pageId ===
               STAGE_COUNT && (
@@ -2798,9 +3050,29 @@ function WorkspacePage() {
         />
       </Panel>
 
+      <Panel
+        title="当前判断"
+        subtitle="YOUR MODEL"
+        open={openPanel === "current"}
+        onClose={() => setOpenPanel(null)}
+        variant="side"
+      >
+        <CurrentJudgmentPanel progress={progress} />
+      </Panel>
 
       <Panel
-        title="我的证据与批注"
+        title="Agent 审查"
+        subtitle="PRESSURE REVIEW"
+        open={openPanel === "review"}
+        onClose={() => setOpenPanel(null)}
+        variant="side"
+      >
+        <AgentReviewPanel progress={progress} />
+      </Panel>
+
+
+      <Panel
+        title="我的推理证据"
         subtitle="EVIDENCE NOTES"
 
         open={

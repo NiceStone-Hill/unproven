@@ -101,8 +101,8 @@ function AnnotationsPanel() {
           className="stageIntro"
           style={{ margin: 0 }}
         >
-          还没有批注。回到原文，
-          选中任意一段文字即可添加你的标记和想法。
+          还没有推理证据。回到原文，
+          长按或拖选一段可能影响判断的文字，把它保存下来。
         </p>
 
         {error && (
@@ -158,8 +158,8 @@ function AnnotationsPanel() {
               <span>
                 {annotation.inputMode ===
                 "draw"
-                  ? "手写批注"
-                  : "键盘批注"}
+                  ? "手写保存理由"
+                  : "键盘保存理由"}
               </span>
             </div>
 
@@ -187,7 +187,7 @@ function AnnotationsPanel() {
               </p>
             ) : (
               <p className="annotationNote muted">
-                未识别到文字。
+                未识别到保存理由。
               </p>
             )}
           </>
@@ -197,7 +197,7 @@ function AnnotationsPanel() {
           </p>
         ) : (
           <p className="annotationNote muted">
-            仅高亮，未填写批注。
+            已保存原文，未填写保存理由。
           </p>
         )}
 
