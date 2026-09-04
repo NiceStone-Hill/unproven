@@ -1218,11 +1218,6 @@
 .inlineEvidenceHint strong { color: #254648; font-size: 13px; line-height: 1.6; }
 .inlineEvidenceHint button { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; color: var(--scan); background: transparent; border: 1px solid #9ab8b5; font-size: 18px; }
 
-.sealedEntryNotice { display: flex; align-items: center; gap: 12px; margin: -10px 0 28px; padding: 12px 14px; background: var(--scan-pale); border-left: 4px solid var(--scan); }
-.sealedEntryNotice > span { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; color: #fff; background: var(--scan); border-radius: 50%; font-weight: 800; }
-.sealedEntryNotice strong { display: block; color: #23484a; font-size: 14px; }
-.sealedEntryNotice p { margin: 2px 0 0; color: #496766; font-size: 12px; }
-
 .guidedEmptyState { padding: 24px; background: var(--scan-pale); border-left: 4px solid var(--scan); }
 .guidedEmptyState > span { color: var(--scan); font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
 .guidedEmptyState h3 { margin: 8px 0 5px; font-family: var(--font-reading); font-size: 22px; }

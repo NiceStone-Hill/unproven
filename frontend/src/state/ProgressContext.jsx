@@ -22,18 +22,12 @@ export function ProgressProvider({ children }) {
 
   const actions = useMemo(
     () => ({
-      startExperience({ initialJudgment = null, restart = false } = {}) {
-        setProgress((prev) => {
-          const base = restart ? createDefaultProgress() : prev;
-          return {
-          ...base,
+      startExperience() {
+        setProgress((prev) => ({
+          ...prev,
           started: true,
-          startedAt: base.startedAt || new Date().toISOString(),
-          initialJudgment: initialJudgment
-            ? { ...initialJudgment, sealedAt: new Date().toISOString() }
-            : base.initialJudgment,
-        };
-        });
+          startedAt: prev.startedAt || new Date().toISOString(),
+        }));
       },
 
       setCurrentStage(stageId) {

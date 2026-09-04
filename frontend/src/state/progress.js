@@ -14,7 +14,6 @@ export function createDefaultProgress() {
     sessionId: createSessionId(),
     started: false,
     startedAt: null,
-    initialJudgment: null,
     reading: {
       completed: false,
       trainingCompleted: false,
