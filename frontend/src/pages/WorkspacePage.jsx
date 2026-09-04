@@ -289,8 +289,8 @@ function FloatingMenu({
       {showHint && !open && (
         <aside className="readerToolsHint" aria-label="阅读工具提示">
           <span>第一次使用</span>
-          <strong>选中文字，就能留下批注</strong>
-          <p>你的批注、阅读问答和当前思考都收在“阅读工具”里。</p>
+          <strong>选中文字，留下你的证据判断</strong>
+          <p>证据批注、无剧透释义和每一版观点都收在“阅读工具”里。</p>
           <button type="button" onClick={onDismissHint}>知道了</button>
         </aside>
       )}
@@ -308,10 +308,20 @@ function FloatingMenu({
           <button
             type="button"
             onClick={
+              onOpenCheckpoint
+            }
+          >
+            <span><b aria-hidden="true">◇</b>当前思考</span>
+            <small>{hasPendingCheckpoint ? "待回应" : "查看"}</small>
+          </button>
+
+          <button
+            type="button"
+            onClick={
               onOpenAnnotations
             }
           >
-            <span><b aria-hidden="true">✎</b>我的批注</span>
+            <span><b aria-hidden="true">✎</b>我的证据与批注</span>
             <small>{annotationCount || "暂无"}</small>
           </button>
 
@@ -319,18 +329,8 @@ function FloatingMenu({
             type="button"
             onClick={onOpenQA}
           >
-            <span><b aria-hidden="true">?</b>阅读问答</span>
-            <small>针对文本</small>
-          </button>
-
-          <button
-            type="button"
-            onClick={
-              onOpenCheckpoint
-            }
-          >
-            <span><b aria-hidden="true">◇</b>当前思考</span>
-            <small>{hasPendingCheckpoint ? "待回应" : "查看"}</small>
+            <span><b aria-hidden="true">?</b>无剧透释义</span>
+            <small>名词与背景</small>
           </button>
 
           <button
@@ -1160,6 +1160,17 @@ function PressureCheckpoint({
             </div>
           </div>
 
+          <div className="agentBoundary" role="note">
+            <strong>无剧透证据边界</strong>
+            <p>
+              Agent 只读取你的 V1 与当前已解锁证据
+              {stressResult.rationale_evidence_ids?.length
+                ? `（${stressResult.rationale_evidence_ids.join(" · ")}）`
+                : ""}
+              ，看不到后文与谜底。
+            </p>
+          </div>
+
           <div className="chatComposer revisionComposer">
             <label className="checkpointResponseLabel" htmlFor="stress-answer">
               我的回应
@@ -1621,9 +1632,18 @@ function CheckpointPanel({
 function ThinkingJourney({
   progress,
 }) {
-  const { saveReasoningJourney } = useProgress();
+  const {
+    saveReasoningJourney,
+    submitFeedback,
+  } = useProgress();
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
+  const [feedbackDraft, setFeedbackDraft] = useState(
+    progress.completion.feedback || "",
+  );
+  const [feedbackSaved, setFeedbackSaved] = useState(
+    Boolean(progress.completion.feedback),
+  );
   const requestedSummary = useRef(false);
 
   const requestSummary = useCallback(() => {
@@ -1835,6 +1855,32 @@ function ThinkingJourney({
             {summary?.solution_path?.map((step) => <article role="listitem" key={step.step_id}><b>{String(step.step_id).padStart(2, "0")}</b><p>{step.text}</p></article>)}
           </div>
         </details>
+      </section>
+
+      <section className="readerFeedbackSection">
+        <span>READER FEEDBACK</span>
+        <h3>这次阅读，哪一刻改变了你的判断？</h3>
+        <p>请写下具体线索、卡住的位置或新的理解。反馈只保存在当前设备，可随时修改。</p>
+        <textarea
+          value={feedbackDraft}
+          onChange={(event) => {
+            setFeedbackDraft(event.target.value);
+            setFeedbackSaved(false);
+          }}
+          placeholder="例如：我原本把排水管理解成人的出口，直到……"
+          maxLength={500}
+        />
+        <button
+          className="secondaryButton"
+          type="button"
+          disabled={!feedbackDraft.trim()}
+          onClick={() => {
+            submitFeedback(feedbackDraft.trim());
+            setFeedbackSaved(true);
+          }}
+        >
+          {feedbackSaved ? "反馈已保存" : "保存我的体验反馈"}
+        </button>
       </section>
 
       <footer className="caseClosureFooter">
@@ -2664,8 +2710,8 @@ function WorkspacePage() {
 
 
       <Panel
-        title="我的批注"
-        subtitle="READING NOTES"
+        title="我的证据与批注"
+        subtitle="EVIDENCE NOTES"
 
         open={
           openPanel ===
@@ -2681,8 +2727,8 @@ function WorkspacePage() {
 
 
       <Panel
-        title="阅读问答"
-        subtitle="READER ASSISTANT"
+        title="无剧透释义"
+        subtitle="CONTEXT ASSISTANT"
 
         open={
           openPanel === "qa"

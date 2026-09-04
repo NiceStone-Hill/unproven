@@ -9,6 +9,40 @@ const API_URL =
 
 const REQUEST_TIMEOUT_MS = 12000;
 
+const STAGE_CACHE_KEY =
+  "unproven_stage_cache_v1";
+
+function readStageCache() {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    return JSON.parse(
+      window.localStorage.getItem(STAGE_CACHE_KEY) || "{}",
+    );
+  } catch {
+    return {};
+  }
+}
+
+function cacheStage(stage) {
+  if (!stage?.stage_id || typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    const cache = readStageCache();
+    cache[stage.stage_id] = stage;
+    window.localStorage.setItem(
+      STAGE_CACHE_KEY,
+      JSON.stringify(cache),
+    );
+  } catch {
+    // Storage may be unavailable. The live response remains usable.
+  }
+}
+
 
 const PROGRESS_STORAGE_KEY =
   "inkecho_progress_v1";
@@ -229,9 +263,33 @@ export function getStages() {
 export function getStage(
   stageId,
 ) {
+  const cached = readStageCache()[stageId];
+
+  if (cached) {
+    return Promise.resolve(cached);
+  }
 
   return request(
     `/api/content/stages/${stageId}`,
+    { timeoutMs: 30000 },
+  ).then((stage) => {
+    cacheStage(stage);
+    return stage;
+  });
+}
+
+export async function warmReadingContent() {
+  const stageIds = Array.from(
+    { length: 8 },
+    (_, index) => index + 1,
+  );
+
+  const results = await Promise.allSettled(
+    stageIds.map((stageId) => getStage(stageId)),
+  );
+
+  return results.some(
+    (result) => result.status === "fulfilled",
   );
 }
 
