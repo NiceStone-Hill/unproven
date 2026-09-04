@@ -1978,6 +1978,241 @@
   }
 }
 
+/* Evidence is a first-class reading object, not decorative metadata. */
+.checkpointEvidence {
+  margin: 0 0 22px;
+  padding: 14px;
+  background: #edf1ee;
+  border: 1px solid #a9bbb6;
+  box-shadow: 4px 4px 0 rgba(31, 67, 68, 0.08);
+}
+
+.checkpointEvidenceHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #31595a;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.checkpointEvidenceHeading small {
+  color: #71817d;
+  letter-spacing: 0;
+}
+
+.checkpointEvidenceList {
+  display: grid;
+  gap: 8px;
+}
+
+.checkpointEvidenceCard {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 11px;
+  color: #465553;
+  background: rgba(255, 255, 255, 0.58);
+  border-left: 3px solid #9baba7;
+}
+
+.checkpointEvidenceCard strong {
+  color: #31595a;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.checkpointEvidenceCard p {
+  margin: 0;
+  font-family: var(--font-reading);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.checkpointEvidenceCard small {
+  color: #7a8985;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.checkpointEvidenceCard.isActive {
+  color: #243f40;
+  background: #fffaf1;
+  border-left-color: #bb493f;
+  box-shadow: 3px 3px 0 rgba(187, 73, 63, 0.12);
+  animation: evidenceArrives 540ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+}
+
+.checkpointEvidenceCard.isActive small {
+  color: #9a3932;
+  font-weight: 700;
+}
+
+.evidenceCollisionMoment {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #a9bbb6;
+  animation: collisionSettles 620ms 180ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.evidenceCollisionMark {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: #fff;
+  background: #bb493f;
+  box-shadow: 3px 3px 0 #31595a;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.evidenceCollisionMoment span {
+  color: #9a3932;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.evidenceCollisionMoment p {
+  margin: 3px 0 0;
+  color: #2f4140;
+  font-family: var(--font-reading);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.hypothesisDelta {
+  display: grid;
+  gap: 0;
+  margin: 16px 0 20px;
+  border: 1px solid #acbbb7;
+  box-shadow: 5px 5px 0 rgba(31, 67, 68, 0.09);
+  animation: deltaReveals 560ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+}
+
+.hypothesisDeltaVersion,
+.hypothesisDeltaCollision {
+  padding: 13px 15px;
+}
+
+.hypothesisDeltaVersion {
+  background: #f2eee5;
+}
+
+.hypothesisDeltaResult {
+  background: #dceae5;
+  border-top: 1px solid #9eb5ae;
+}
+
+.hypothesisDelta span {
+  color: #58716c;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+
+.hypothesisDelta p {
+  margin: 5px 0 0;
+  color: #263b39;
+  font-family: var(--font-reading);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.hypothesisDeltaCollision {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  column-gap: 9px;
+  color: #fff;
+  background: #344f4f;
+}
+
+.hypothesisDeltaCollision b {
+  grid-row: 1 / 3;
+  color: #f39a91;
+  font-family: var(--font-mono);
+  font-size: 25px;
+}
+
+.hypothesisDeltaCollision span {
+  color: #b8d3cd;
+}
+
+.hypothesisDeltaCollision p {
+  color: #f5f1e8;
+}
+
+.hypothesisDelta.isKept .hypothesisDeltaResult {
+  background: #ebe8df;
+}
+
+@keyframes evidenceArrives {
+  from {
+    opacity: 0.35;
+    transform: translateX(-14px) scale(0.985);
+    box-shadow: 0 0 0 rgba(187, 73, 63, 0);
+  }
+  68% {
+    box-shadow: 7px 3px 0 rgba(187, 73, 63, 0.18);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    box-shadow: 3px 3px 0 rgba(187, 73, 63, 0.12);
+  }
+}
+
+@keyframes collisionSettles {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    background: rgba(187, 73, 63, 0.12);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    background: transparent;
+  }
+}
+
+@keyframes deltaReveals {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .checkpointEvidenceCard {
+    grid-template-columns: 36px 1fr;
+  }
+
+  .checkpointEvidenceCard small {
+    grid-column: 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkpointEvidenceCard.isActive,
+  .evidenceCollisionMoment,
+  .hypothesisDelta {
+    animation: none;
+  }
+}
+
 /* UI v3 — evidence reconstruction dossier */
 .checkpointNotification {
   color: var(--ink);

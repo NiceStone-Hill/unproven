@@ -382,8 +382,61 @@ function ConfidenceSelector({
 }
 
 
+function EvidenceStrip({
+  evidence = [],
+  activeIds = [],
+  collision = false,
+  assumption = "",
+}) {
+  if (!evidence.length) {
+    return null;
+  }
+
+  const activeSet = new Set(activeIds);
+
+  return (
+    <section
+      className={`checkpointEvidence ${collision ? "checkpointEvidenceCollision" : ""}`}
+      aria-label="当前已解锁证据"
+    >
+      <div className="checkpointEvidenceHeading">
+        <span>CURRENT EVIDENCE</span>
+        <small>{evidence.length} 条已解锁</small>
+      </div>
+
+      <div className="checkpointEvidenceList">
+        {evidence.map((item) => {
+          const active = activeSet.has(item.evidence_id);
+          return (
+            <article
+              className={`checkpointEvidenceCard ${active ? "isActive" : ""}`}
+              key={item.evidence_id}
+            >
+              <strong>{item.evidence_id}</strong>
+              <p>{item.text}</p>
+              <small>{active ? "本次审查依据" : "已解锁"}</small>
+            </article>
+          );
+        })}
+      </div>
+
+      {collision && assumption && (
+        <div className="evidenceCollisionMoment" role="status">
+          <div className="evidenceCollisionMark" aria-hidden="true">×</div>
+          <div>
+            <span>被证据撞击的未证前提</span>
+            <p>{assumption}</p>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+
 function CaptureCheckpoint({
   progress,
+  stage,
   checkpoint,
   onClose,
 }) {
@@ -456,6 +509,8 @@ function CaptureCheckpoint({
 
   return (
     <>
+      <EvidenceStrip evidence={stage.allowed_evidence} />
+
       <div
         className="chatMessage chatMessageAgent"
       >
@@ -655,6 +710,7 @@ function TrainingCheckpoint({
 
 function PressureCheckpoint({
   progress,
+  stage,
   checkpoint,
   onClose,
 }) {
@@ -1035,20 +1091,23 @@ function PressureCheckpoint({
           </div>
         </div>
 
-        {!unchanged && (
-          <div
-            className="chatMessage chatMessageUser"
-          >
-            <div
-              className="chatBubble"
-            >
-              {
-                completedHypothesis
-                  .text
-              }
-            </div>
+        <section className={`hypothesisDelta ${unchanged ? "isKept" : "isRevised"}`}>
+          <div className="hypothesisDeltaVersion">
+            <span>V1 · 原判断</span>
+            <p>{sourceHypothesis.text}</p>
           </div>
-        )}
+
+          <div className="hypothesisDeltaCollision">
+            <b aria-hidden="true">×</b>
+            <span>未证前提</span>
+            <p>{stressResult?.selected_assumption || stressResult?.pressure_question}</p>
+          </div>
+
+          <div className="hypothesisDeltaVersion hypothesisDeltaResult">
+            <span>V2 · {unchanged ? "保留判断" : "修正后的判断"}</span>
+            <p>{completedHypothesis.text}</p>
+          </div>
+        </section>
 
         <button
           className="primaryButton"
@@ -1111,6 +1170,13 @@ function PressureCheckpoint({
 
       {stressResult && (
         <>
+          <EvidenceStrip
+            evidence={stage.allowed_evidence}
+            activeIds={stressResult.rationale_evidence_ids}
+            collision={stressResult.category !== "UNCLEAR"}
+            assumption={stressResult.selected_assumption}
+          />
+
           {stressResult.category ===
             "UNCLEAR" && (
             <div
@@ -1587,6 +1653,7 @@ function CheckpointPanel({
           "capture" && (
           <CaptureCheckpoint
             progress={progress}
+            stage={stage}
             checkpoint={
               checkpoint
             }
@@ -1601,6 +1668,7 @@ function CheckpointPanel({
           "pressure" && (
           <PressureCheckpoint
             progress={progress}
+            stage={stage}
 
             checkpoint={
               checkpoint
