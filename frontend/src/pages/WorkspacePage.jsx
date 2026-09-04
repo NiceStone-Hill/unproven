@@ -353,11 +353,6 @@ function FloatingMenu({
 
 function CurrentJudgmentPanel({ progress }) {
   const records = [
-    progress.initialJudgment && {
-      label: "开场判断",
-      text: progress.initialJudgment.text,
-      evidence: progress.initialJudgment.evidence,
-    },
     progress.hypothesisV1 && { label: "V1", text: progress.hypothesisV1.text },
     progress.hypothesisV2 && { label: "V2", text: progress.hypothesisV2.text },
     progress.finalReasoning && { label: "Final", text: progress.finalReasoning.text },
@@ -1943,8 +1938,8 @@ function ThinkingJourney({
 
   const shareText = [
     "我的 UNPROVEN 推理档案｜第十三号牢房",
-    `最初判断：${progress.hypothesisV1?.text || progress.initialJudgment?.text || "未记录"}`,
-    `改变我的证据：${worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence || "在阅读中逐步发现"}`,
+    `最初判断：${progress.hypothesisV1?.text || "未记录"}`,
+    `改变我的证据：${worldModel?.impacts?.[0]?.evidence_summary || "在阅读中逐步发现"}`,
     `我误设的前提：${progress.stressResult?.selected_assumption || "尚未识别"}`,
     showShareSpoiler ? `最终理解：${progress.finalReasoning?.text || "未记录"}` : "最终理解：已隐藏谜底",
   ].join("\n");
@@ -1972,8 +1967,8 @@ function ThinkingJourney({
       return [clean.slice(0, max), clean.slice(max, max * 2), clean.length > max * 2 ? `${clean.slice(max * 2, max * 3)}…` : ""].filter(Boolean);
     };
     const fields = [
-      ["我的最初判断", progress.hypothesisV1?.text || progress.initialJudgment?.text],
-      ["改变我的证据", worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence],
+      ["我的最初判断", progress.hypothesisV1?.text],
+      ["改变我的证据", worldModel?.impacts?.[0]?.evidence_summary],
       ["我误设的前提", progress.stressResult?.selected_assumption],
       ["最终理解", showShareSpoiler ? progress.finalReasoning?.text : "谜底已隐藏 · 来建立你自己的世界模型"],
     ];
@@ -2046,8 +2041,8 @@ function ThinkingJourney({
           <span>{showShareSpoiler ? "含谜底" : "不含谜底"}</span>
         </label>
         <div className="shareCardPreview">
-          <p><b>我的最初判断</b>{progress.hypothesisV1?.text || progress.initialJudgment?.text || "未记录"}</p>
-          <p><b>改变我的证据</b>{worldModel?.impacts?.[0]?.evidence_summary || progress.initialJudgment?.evidence || "在阅读中逐步发现"}</p>
+          <p><b>我的最初判断</b>{progress.hypothesisV1?.text || "未记录"}</p>
+          <p><b>改变我的证据</b>{worldModel?.impacts?.[0]?.evidence_summary || "在阅读中逐步发现"}</p>
           <p><b>我误设的前提</b>{progress.stressResult?.selected_assumption || "尚未识别"}</p>
           <p><b>最终理解</b>{showShareSpoiler ? (progress.finalReasoning?.text || "未记录") : "谜底已隐藏"}</p>
         </div>
@@ -2876,17 +2871,6 @@ function WorkspacePage() {
             {pageLabel}
           </span>
         </div>
-
-        {pageId === 1 && progress.initialJudgment && (
-          <div className="sealedEntryNotice" role="status">
-            <span aria-hidden="true">✓</span>
-            <div>
-              <strong>已封存</strong>
-              <p>之后的新证据可能会挑战这个判断。</p>
-            </div>
-          </div>
-        )}
-
 
         {loading &&
           !stage && (
