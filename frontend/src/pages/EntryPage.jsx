@@ -1,12 +1,20 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProgress } from "../state/ProgressContext";
 import { getResumeRoute } from "../state/progress";
+import { warmReadingContent } from "../api";
 
 function EntryPage() {
   const navigate = useNavigate();
   const { progress, startExperience, resetProgress } = useProgress();
 
   const hasProgress = progress.started;
+
+  useEffect(() => {
+    // Wake the content service while the reader is still on the cover and
+    // cache every chapter after the first successful visit.
+    warmReadingContent().catch(() => {});
+  }, []);
 
   function handleStart() {
     if (hasProgress) {
@@ -52,6 +60,12 @@ function EntryPage() {
         越狱，你要逃出的，不是牢房，是你默认的世界。
       </p>
 
+      <div className="readerPromise" aria-label="体验说明">
+        <p><strong>为谁：</strong>第一次读经典推理、容易追着谜底走的年轻读者</p>
+        <p><strong>你会做什么：</strong>收集线索，封存判断，接受一次无剧透的前提审查</p>
+        <p><strong>你会带走什么：</strong>不是正确率，而是一份证据如何改变你的推理档案</p>
+      </div>
+
       <p className="introduction">
         奥古斯都·S·F·X·范·杜森教授，人称“思考机器”。过去三十五年里，
         他始终相信：万事皆有来由，也必有归宿；只要事实齐全，任何问题都能被推理还原。
@@ -74,6 +88,10 @@ function EntryPage() {
           </button>
         </div>
       </div>
+
+      <p className="sourceNote">
+        文本说明：雅克·福翠尔公版作品 The Problem of Cell 13；中文修订全译本依据 Project Gutenberg 第 57669 号英文公版文本校核。
+      </p>
     </section>
   );
 }

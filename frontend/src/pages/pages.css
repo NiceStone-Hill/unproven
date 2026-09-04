@@ -9,6 +9,20 @@
   color: #211f1b;
 }
 
+.agentBoundary {
+  margin: 12px 0 18px;
+  padding: 12px 14px;
+  color: #51483d;
+  background: rgba(197, 159, 85, 0.12);
+  border-left: 3px solid #a06d35;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.agentBoundary p {
+  margin: 4px 0 0;
+}
+
 .ebookSurface {
   width: min(780px, calc(100vw - 112px));
   height: calc(100vh - 58px);

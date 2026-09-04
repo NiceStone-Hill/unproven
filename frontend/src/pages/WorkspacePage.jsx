@@ -289,8 +289,8 @@ function FloatingMenu({
       {showHint && !open && (
         <aside className="readerToolsHint" aria-label="阅读工具提示">
           <span>第一次使用</span>
-          <strong>选中文字，就能留下批注</strong>
-          <p>你的批注、阅读问答和当前思考都收在“阅读工具”里。</p>
+          <strong>选中文字，留下你的证据判断</strong>
+          <p>证据批注、无剧透释义和每一版观点都收在“阅读工具”里。</p>
           <button type="button" onClick={onDismissHint}>知道了</button>
         </aside>
       )}
@@ -308,10 +308,20 @@ function FloatingMenu({
           <button
             type="button"
             onClick={
+              onOpenCheckpoint
+            }
+          >
+            <span><b aria-hidden="true">◇</b>当前思考</span>
+            <small>{hasPendingCheckpoint ? "待回应" : "查看"}</small>
+          </button>
+
+          <button
+            type="button"
+            onClick={
               onOpenAnnotations
             }
           >
-            <span><b aria-hidden="true">✎</b>我的批注</span>
+            <span><b aria-hidden="true">✎</b>我的证据与批注</span>
             <small>{annotationCount || "暂无"}</small>
           </button>
 
@@ -319,18 +329,8 @@ function FloatingMenu({
             type="button"
             onClick={onOpenQA}
           >
-            <span><b aria-hidden="true">?</b>阅读问答</span>
-            <small>针对文本</small>
-          </button>
-
-          <button
-            type="button"
-            onClick={
-              onOpenCheckpoint
-            }
-          >
-            <span><b aria-hidden="true">◇</b>当前思考</span>
-            <small>{hasPendingCheckpoint ? "待回应" : "查看"}</small>
+            <span><b aria-hidden="true">?</b>无剧透释义</span>
+            <small>名词与背景</small>
           </button>
 
           <button
@@ -1158,6 +1158,17 @@ function PressureCheckpoint({
                 stressResult.pressure_question
               }
             </div>
+          </div>
+
+          <div className="agentBoundary" role="note">
+            <strong>无剧透证据边界</strong>
+            <p>
+              Agent 只读取你的 V1 与当前已解锁证据
+              {stressResult.rationale_evidence_ids?.length
+                ? `（${stressResult.rationale_evidence_ids.join(" · ")}）`
+                : ""}
+              ，看不到后文与谜底。
+            </p>
           </div>
 
           <div className="chatComposer revisionComposer">
@@ -2664,8 +2675,8 @@ function WorkspacePage() {
 
 
       <Panel
-        title="我的批注"
-        subtitle="READING NOTES"
+        title="我的证据与批注"
+        subtitle="EVIDENCE NOTES"
 
         open={
           openPanel ===
@@ -2681,8 +2692,8 @@ function WorkspacePage() {
 
 
       <Panel
-        title="阅读问答"
-        subtitle="READER ASSISTANT"
+        title="无剧透释义"
+        subtitle="CONTEXT ASSISTANT"
 
         open={
           openPanel === "qa"

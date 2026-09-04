@@ -204,6 +204,39 @@
   line-height: 1.55;
 }
 
+.readerPromise {
+  display: grid;
+  max-width: 760px;
+  margin: 0 0 28px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.readerPromise p {
+  margin: 0;
+  padding: 9px 0;
+  color: var(--ink-soft);
+  border-bottom: 1px solid rgba(127, 47, 40, 0.12);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.readerPromise p:last-child {
+  border-bottom: 0;
+}
+
+.readerPromise strong {
+  color: var(--ink-raised);
+}
+
+.sourceNote {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
 .editor {
   position: relative;
   margin-top: 36px;
