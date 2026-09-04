@@ -23,6 +23,46 @@
   margin: 4px 0 0;
 }
 
+.readerFeedbackSection {
+  margin: 48px 0 18px;
+  padding: 24px;
+  background: rgba(255, 250, 242, 0.62);
+  border: 1px solid #c9bba6;
+}
+
+.readerFeedbackSection > span {
+  color: #8a5c32;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.readerFeedbackSection h3 {
+  margin: 8px 0;
+  font-family: var(--font-reading);
+  font-size: 22px;
+}
+
+.readerFeedbackSection p {
+  margin: 0 0 14px;
+  color: #6d6356;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.readerFeedbackSection textarea {
+  width: 100%;
+  min-height: 96px;
+  margin-bottom: 12px;
+  padding: 12px;
+  resize: vertical;
+  color: #26221d;
+  background: #fffaf2;
+  border: 1px solid #bcae99;
+  font: inherit;
+  line-height: 1.65;
+}
+
 .ebookSurface {
   width: min(780px, calc(100vw - 112px));
   height: calc(100vh - 58px);

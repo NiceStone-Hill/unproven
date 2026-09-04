@@ -1632,9 +1632,18 @@ function CheckpointPanel({
 function ThinkingJourney({
   progress,
 }) {
-  const { saveReasoningJourney } = useProgress();
+  const {
+    saveReasoningJourney,
+    submitFeedback,
+  } = useProgress();
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
+  const [feedbackDraft, setFeedbackDraft] = useState(
+    progress.completion.feedback || "",
+  );
+  const [feedbackSaved, setFeedbackSaved] = useState(
+    Boolean(progress.completion.feedback),
+  );
   const requestedSummary = useRef(false);
 
   const requestSummary = useCallback(() => {
@@ -1846,6 +1855,32 @@ function ThinkingJourney({
             {summary?.solution_path?.map((step) => <article role="listitem" key={step.step_id}><b>{String(step.step_id).padStart(2, "0")}</b><p>{step.text}</p></article>)}
           </div>
         </details>
+      </section>
+
+      <section className="readerFeedbackSection">
+        <span>READER FEEDBACK</span>
+        <h3>这次阅读，哪一刻改变了你的判断？</h3>
+        <p>请写下具体线索、卡住的位置或新的理解。反馈只保存在当前设备，可随时修改。</p>
+        <textarea
+          value={feedbackDraft}
+          onChange={(event) => {
+            setFeedbackDraft(event.target.value);
+            setFeedbackSaved(false);
+          }}
+          placeholder="例如：我原本把排水管理解成人的出口，直到……"
+          maxLength={500}
+        />
+        <button
+          className="secondaryButton"
+          type="button"
+          disabled={!feedbackDraft.trim()}
+          onClick={() => {
+            submitFeedback(feedbackDraft.trim());
+            setFeedbackSaved(true);
+          }}
+        >
+          {feedbackSaved ? "反馈已保存" : "保存我的体验反馈"}
+        </button>
       </section>
 
       <footer className="caseClosureFooter">
