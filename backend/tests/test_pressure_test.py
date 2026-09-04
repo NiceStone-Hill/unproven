@@ -63,7 +63,7 @@ class PressureTestTests(unittest.TestCase):
         payload = build_model_payload(self.input_data)
         self.assertEqual(payload["response_format"], {"type": "json_object"})
         self.assertEqual(payload["temperature"], 0.1)
-        self.assertFalse(payload["enable_thinking"])
+        self.assertNotIn("enable_thinking", payload)
         self.assertIn("JSON", payload["messages"][0]["content"])
         self.assertIn("JSON", payload["messages"][1]["content"])
 

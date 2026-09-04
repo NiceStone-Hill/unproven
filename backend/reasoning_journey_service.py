@@ -86,7 +86,6 @@ def build_journey_model_payload(request: ReasoningJourneyRequest) -> dict[str, A
     return {
         "model": AI_MODEL,
         "temperature": 0.2,
-        "enable_thinking": False,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": build_journey_prompt(request)},

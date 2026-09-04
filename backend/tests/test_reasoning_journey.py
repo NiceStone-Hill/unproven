@@ -44,7 +44,7 @@ class ReasoningJourneyTests(unittest.TestCase):
         payload = build_journey_model_payload(make_request())
         self.assertEqual(payload["response_format"], {"type": "json_object"})
         self.assertEqual(payload["temperature"], 0.2)
-        self.assertFalse(payload["enable_thinking"])
+        self.assertNotIn("enable_thinking", payload)
         self.assertEqual(len(payload["messages"]), 2)
 
     def test_missing_api_key_returns_structured_fallback(self):

@@ -158,10 +158,6 @@ def _call_model(
 
         "temperature": 0.2,
 
-        # 百科问答不需要思维链，关掉思考模式
-        # 能显著缩短“无声等待”的时间，
-        # 让流式输出更快开始显示文字。
-        "enable_thinking": False,
     }
 
     headers = {
@@ -224,9 +220,6 @@ def _iter_stream_deltas(
 
         "stream": True,
 
-        # 同上，关掉思考模式，减少内容开始
-        # 流出前的无声等待。
-        "enable_thinking": False,
     }
 
     headers = {

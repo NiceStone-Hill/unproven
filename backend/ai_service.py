@@ -159,7 +159,6 @@ def build_model_payload(input_data: PressureTestInput) -> dict[str, Any]:
     return {
         "model": AI_MODEL,
         "temperature": 0.1,
-        "enable_thinking": False,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": build_agent_prompt(input_data)},
